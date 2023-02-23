@@ -1,17 +1,13 @@
 from flask import current_app
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
+from flask_pymongo import PyMongo
 
-class MongoConfig:
-    @staticmethod
-    def setup():
-      db_password = ""
-      db_username = ""
-      db_host = ""
-      db_uri = "mongodb+srv://%s:%s@%s/?retryWrites=true&w=majority" % (db_username, db_password, db_host)
-      client = MongoClient(db_uri, server_api=ServerApi('1'))
-      db = client.game
+def setup_database():
+  """
+  Configuration method to return db instance
+  """
+  client = PyMongo(current_app)
 
-      return db
+  current_app._database = getattr(current_app, "_database", None)
 
-      
+  if current_app._database is None:
+    current_app._database = client.db
